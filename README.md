@@ -1,5 +1,5 @@
 
-![Adstxter logo](/lusitdev/Adstxter/raw/master/chrome/store/128.png)
+![Adstxter logo](chrome/store/128.png)
 
 # Adstxter
 
