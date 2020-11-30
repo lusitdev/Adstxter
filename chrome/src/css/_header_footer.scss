@@ -1,0 +1,29 @@
+header {
+  line-height: 2.8rem;
+  height: 2.8rem;
+  font-size: var(--m);
+
+  >a,
+  >button {
+    margin: 0 .6rem;
+  }
+
+  >button {
+    &:enabled:hover {
+      cursor: pointer;
+      color: var(--main);
+    }
+  }
+
+  & :first-child {
+    margin-left: 0;
+  }
+}
+
+footer {
+  position: relative;
+  font: normal var(--s)/var(--s) 'B612 Mono', monospace;
+  text-align: right;
+  color: var(--sec);
+  margin-top: .5rem;
+}

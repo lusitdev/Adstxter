@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="css/popup.css" rel="stylesheet">
+</head>
+<body>
+  <header aria-live="polite" aria-busy="true"></header>
+  <div id="sellers" contenteditable="true" data-text="Enter sellers in ads.txt format..." spellcheck="false" role="textbox" aria-label="Sellers" aria-multiline="true"></div>
+  <div id="result" aria-live="assertive" aria-busy="true">
+    <div id="loading" aria-hidden="true"></div>
+    <button aria-disabled="true" aria-label="Test result" hidden>
+      <span></span>
+      <span>Copy to clipboard</span>
+    </button>
+  </div>
+  <footer role="contentinfo">Adstxter</footer>
+  <script src="popup.js"></script>
+</body>
+</html>

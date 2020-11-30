@@ -1,0 +1,79 @@
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  min-width: 38.7rem;
+  font: 400 var(--m)/1.6rem 'Roboto', sans-serif;
+  color: var(--sec);
+  padding: .4rem 0;
+  background: var(--bg2) url(../images/bg.jpg) center/contain;
+
+  >* {
+    margin: 0 1.7rem;
+  }
+}
+
+a {
+  color: var(--sec);
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover,
+  &:focus {
+    color: var(--main);
+    outline: 0;
+  }
+}
+
+button {
+  color: inherit;
+  font: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+    color: var(--main);
+  }
+
+  &:enabled:hover {
+    cursor: pointer;
+    color: var(--main);
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.auth {
+  color: var(--au);
+}
+
+.unau {
+  color: var(--un);
+}
+
+.mes {
+  color: var(--mes);
+}
+
+.main {
+  color: var(--main);
+}
+
+.ignored {
+  color: var(--sec);
+}
+
+i {
+  font-style: normal;
+  margin-right: .4rem;
+
+  &.chevron {
+    margin: 0;
+  }
+}

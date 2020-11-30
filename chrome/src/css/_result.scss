@@ -1,0 +1,75 @@
+#result {
+  @include flexMix(stretch, center, column);
+  height: 4.4rem;
+  margin: .8rem 1.5rem .4rem 1.5rem;
+
+  button {
+    height: 4.4rem;
+    border: .2rem solid transparent;
+    border-radius: .6rem;
+
+    span {
+      display: inline-block;
+      width: 100%;
+      line-height: 4rem;
+    }
+
+    &[aria-disabled=true] {
+      border-color: var(--bg2);
+
+      &:hover {
+        cursor: auto;
+      }
+
+      :last-child {
+        display: none;
+      }
+    }
+
+    &[aria-disabled=false] {
+      position: relative;
+      border-color: var(--brd);
+      transition: all .1s ease-in;
+
+      &:hover {
+        background-color: var(--bg3);
+        cursor: pointer;
+      }
+
+      &:active {
+        border-color: var(--main);
+      }
+
+      &:focus {
+        background-color: var(--bg3);
+      }
+
+      span {
+        position: absolute;
+        width: 24rem;
+        left: 50%;
+        top: 0;
+        margin-left: -12rem;
+      }
+
+      :first-child {
+        color: var(--un);
+      }
+
+      :last-child {
+        color: var(--main);
+      }
+
+      :last-child,
+      &:hover :first-child,
+      &:focus :first-child {
+        opacity: 0;
+      }
+
+      &:hover :last-child,
+      &:focus :last-child {
+        opacity: 1;
+      }
+    }
+  }
+}
