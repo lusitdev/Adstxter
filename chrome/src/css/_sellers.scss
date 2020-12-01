@@ -1,13 +1,11 @@
 #sellers {
   -webkit-user-modify: read-write-plaintext-only;
-  margin: .2rem .4rem .4rem .4rem;
+  margin: .2rem .4rem .4rem;
   min-width: 35.6rem;
-  font: normal var(--s)/1.6rem 'B612 Mono', monospace;
+  @include monoType(var(--s), 1.6rem);
   background-color: var(--bg);
-  border-radius: .6rem;
-  border: .2rem solid var(--brd);
-  color: var(--sec);
-  caret-color: var(--main);
+  @include borders(var(--br));
+  caret-color: var(--hig);
   padding: .8rem 1.1rem;
   height: 17.3rem;
   overflow: auto;
@@ -18,17 +16,17 @@
   }
 
   &:hover {
-    border-color: var(--bt2);
+    border-color: var(--br2);
   }
 
   &:focus {
-    border-color: var(--sec);
+    border-color: var(--def);
     outline: none;
     cursor: auto;
   }
 
   &:focus div {
-    color: var(--sec);
+    color: var(--def);
   }
 
   .auth {
@@ -54,6 +52,6 @@
   background: var(--bg2);
   border-radius: .4rem;
   &:hover {
-    background: var(--but);
+    background: var(--scr);
   }
 }

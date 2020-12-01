@@ -3,7 +3,7 @@
   font-style: normal;
   font-weight: 400;
   src: local('Roboto'), local('Roboto-Regular'),
-        url('../fonts/roboto-v20-latin-regular.woff2') format('woff2');
+    url('../fonts/roboto-v20-latin-regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -11,7 +11,7 @@
   font-style: normal;
   font-weight: 400;
   src: local('B612 Mono Regular'), local('B612Mono-Regular'),
-        url('../fonts/b612-mono-v4-latin-regular.woff2') format('woff2') 
+    url('../fonts/b612-mono-v4-latin-regular.woff2') format('woff2');
 }
 
 @import "variables";

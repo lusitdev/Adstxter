@@ -4,3 +4,12 @@
   justify-content: $justify;
   flex-direction: $column;
 }
+
+@mixin borders($color) {
+  border-radius: .6rem;
+  border: .2rem solid $color;
+}
+
+@mixin monoType($size, $lineHeight) {
+  font: normal $size/$lineHeight 'B612 Mono', monospace;
+}

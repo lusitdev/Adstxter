@@ -1,12 +1,10 @@
 #result {
   @include flexMix(stretch, center, column);
   height: 4.4rem;
-  margin: .8rem 1.5rem .4rem 1.5rem;
+  margin: .8rem 1.5rem .4rem;
 
   button {
-    height: 4.4rem;
-    border: .2rem solid transparent;
-    border-radius: .6rem;
+    @include borders(var(--br));
 
     span {
       display: inline-block;
@@ -28,7 +26,6 @@
 
     &[aria-disabled=false] {
       position: relative;
-      border-color: var(--brd);
       transition: all .1s ease-in;
 
       &:hover {
@@ -37,7 +34,7 @@
       }
 
       &:active {
-        border-color: var(--main);
+        border-color: var(--hig);
       }
 
       &:focus {
@@ -50,14 +47,6 @@
         left: 50%;
         top: 0;
         margin-left: -12rem;
-      }
-
-      :first-child {
-        color: var(--un);
-      }
-
-      :last-child {
-        color: var(--main);
       }
 
       :last-child,
