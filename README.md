@@ -13,7 +13,7 @@ Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/
 
 ![Screenshot of Adstxter: test result](chrome/store/screenshotr640x400_1.jpg)
 
-![Screenshot of Adstxter: copying the missing sellers to clipboard](chrome/store/screenshotr640x400_2.jpg)
+![Screenshot of Adstxter: copying the missing sellers to clipboard](chrome/store/screenshot640x400_2.jpg)
 
 ## Limitations
  * Checking ads.txt files on subdomains is not implemented for now.
