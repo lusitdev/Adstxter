@@ -11,7 +11,7 @@ Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/
  - To check your sellers’ authorization, enter them in the input field of the extension popup. One entry per line. Entered sellers are saved across browser sessions until replaced or removed.
  - The test targets the currently loaded site.
 
-![Screenshot of Adstxter: test result](chrome/store/screenshotr640x400_1.jpg)
+![Screenshot of Adstxter: test result](chrome/store/screenshot640x400_1.jpg)
 
 ![Screenshot of Adstxter: copying the missing sellers to clipboard](chrome/store/screenshot640x400_2.jpg)
 
