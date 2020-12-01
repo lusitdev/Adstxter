@@ -3,17 +3,17 @@
 
 # Adstxter
 
-## Overview
-A simple chrome extension for fast detection of missing sellers in ads.txt files. Provides a one-click test for the presence of specified sellers. It's inactive and not using system resources when it's not used (popup isn't open). The implementation follows the final [IAB Tech Lab ads.txt Specification Version 1.0.2](https://iabtechlab.com/wp-content/uploads/2019/03/IAB-OpenRTB-Ads.txt-Public-Spec-1.0.2.pdf). Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/adstxter-%E2%80%93-adstxt-seller/ncdnbcbfjcflaocmpnhjajngpdoipnci).
+A simple chrome extension for checking ads.txt files. Provides a one-click test for the presence of given sellers. Active only when started by user. Otherwise, suspended and not draining any resources. Handling of ads.txt follows the final [IAB Tech Lab ads.txt Specification Version 1.0.2](https://iabtechlab.com/wp-content/uploads/2019/03/IAB-OpenRTB-Ads.txt-Public-Spec-1.0.2.pdf). 
+
+Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/ncdnbcbfjcflaocmpnhjajngpdoipnci).
 
 ## Usage
- - Enter sellers you want to check in the input field of the Adstxter window. Entered sellers are saved across browser sessions until replaced or removed.
- - To run the test simply click on the extension icon.
- - The test targets the site loaded in active tab.
+ - To check sellers for authorization, enter them in the input field of the Adstxter popup. One entry per line. Entered sellers are saved across browser sessions until replaced or removed.
+ - The test targets the currently loaded site.
 
 ## Limitations
- * Checking ads.txt files on subdomains is currently not implemented.
- * Due to JavaScript security limitation, it's not possible to control the number of redirects when fetching ads.txt. As a result, the following ads.txt requirement is not honored:
+ * Checking ads.txt files on subdomains is not implemented for now.
+ * Due to JavaScript security limitations, it's not possible to control the number of redirects when fetching ads.txt. As a result, the following ads.txt requirement isn't honored:
 
     > Only a single HTTP redirect to a destination outside the original root domain is allowed to facilitate one-hop delegation of authority to a third party's web server domain. If the third party location returns a redirect, then the advertising system should treat the response as an error.
-    > - IAB Tech Lab ads.txt Specification Version 1.0.2
+    > - *IAB Tech Lab ads.txt Specification Version 1.0.2*
