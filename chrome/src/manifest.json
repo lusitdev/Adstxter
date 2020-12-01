@@ -1,8 +1,8 @@
 {   
   "manifest_version": 2,
-    "name": "Adstxter – Ads.txt Seller Tester -- UN",
+    "name": "Adstxter – Ads.txt Seller Tester",
     "short_name": "Adstxter",
-    "version": "0.0.8",
+    "version": "0.1.0",
     "description": "Check your sellers’ ads.txt authorization on any website",
     "icons": {
       "48": "images/48.png",
