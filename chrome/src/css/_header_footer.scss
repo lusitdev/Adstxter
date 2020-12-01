@@ -7,13 +7,6 @@ header {
     margin: 0 .6rem;
   }
 
-  >button {
-    &:enabled:hover {
-      cursor: pointer;
-      color: var(--hig);
-    }
-  }
-
   & :first-child {
     margin-left: 0;
   }

@@ -2,6 +2,7 @@
   @include flexMix(stretch, center, column);
   height: 4.4rem;
   margin: .8rem 1.5rem .4rem;
+  color: var(--hig);
 
   button {
     @include borders(var(--br));
@@ -30,7 +31,7 @@
 
       &:hover {
         background-color: var(--bg3);
-        cursor: pointer;
+        /*cursor: pointer;*/
       }
 
       &:active {
