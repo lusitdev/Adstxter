@@ -8,8 +8,12 @@ A simple chrome extension for checking ads.txt files. Provides a one-click test 
 Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/ncdnbcbfjcflaocmpnhjajngpdoipnci).
 
 ## Usage
- - To check sellers for authorization, enter them in the input field of the Adstxter popup. One entry per line. Entered sellers are saved across browser sessions until replaced or removed.
+ - To check your sellers’ authorization, enter them in the input field of the extension popup. One entry per line. Entered sellers are saved across browser sessions until replaced or removed.
  - The test targets the currently loaded site.
+
+![Screenshot of Adstxter: test result](chrome/store/screenshotr640x400_1.jpg)
+
+![Screenshot of Adstxter: copying the missing sellers to clipboard](chrome/store/screenshotr640x400_2.jpg)
 
 ## Limitations
  * Checking ads.txt files on subdomains is not implemented for now.
