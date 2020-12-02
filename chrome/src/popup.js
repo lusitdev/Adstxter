@@ -53,7 +53,7 @@ const render = (() => {
   function blurHandler(event) {
     let data = event.target.innerText;
 
-    data = (data === `\n`) ? '' : data; 
+    data = (data === `\n`) ? '' : data;
     if (data !== sellers) {
       sellers = data;
       background.saveSync({
@@ -85,7 +85,7 @@ const render = (() => {
     icon.textContent = ico;
     return icon;
   }
-  
+
   function addRefreshButton() {
     const refresh = document.createElement('button');
     const domain = msg.domain.includes('www.') ? msg.domain.slice(4) : msg.domain;
@@ -96,7 +96,7 @@ const render = (() => {
     dom.header.append(refresh);
     refresh.addEventListener('click',
       function () {
-        dom.reInit(msg.status, copyMissing).then(background.refetch()); 
+        dom.reInit(msg.status, copyMissing).then(background.refetch());
       }, {
         once: true
       }
@@ -201,4 +201,3 @@ const render = (() => {
 })();
 
 chrome.runtime.getBackgroundPage(render.handleBg);
-
