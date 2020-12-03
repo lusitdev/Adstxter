@@ -17,8 +17,12 @@ Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/
 ![Screenshot of Adstxter: copying the missing sellers to clipboard](chrome/store/screenshot640x400_2.jpg)
 
 ## Limitations
+
  * Checking ads.txt on subdomains is currently not implemented.
  * Due to JavaScript security limitations, it's not possible to control the number of redirects when fetching ads.txt. (AFAIK). As a result, the following ads.txt directive isn't honored:
 
     > Only a single HTTP redirect to a destination outside the original root domain is allowed to facilitate one-hop delegation of authority to a third party's web server domain. If the third party location returns a redirect, then the advertising system should treat the response as an error.
     > - *IAB Tech Lab ads.txt Specification Version 1.0.2*
+
+## License
+Apache-2.0
