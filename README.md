@@ -1,5 +1,5 @@
 
-![Adstxter logo](chrome/store/128.png)
+![Adstxter logo](store-assets/128.png)
 
 # Adstxter
 
@@ -12,9 +12,9 @@ Install it from the [Chrome Webstore](https://chrome.google.com/webstore/detail/
  - Test is triggered when the extension is started or new sellers are entered.
  - Targets the currently loaded website.
 
-![Screenshot of Adstxter: test result](chrome/store/screenshot640x400_1.jpg)
+![Screenshot of Adstxter: test result](store-assets/screenshot640x400_1.jpg)
 
-![Screenshot of Adstxter: copying the missing sellers to clipboard](chrome/store/screenshot640x400_2.jpg)
+![Screenshot of Adstxter: copying the missing sellers to clipboard](store-assets/screenshot640x400_2.jpg)
 
 ## Limitations
 
