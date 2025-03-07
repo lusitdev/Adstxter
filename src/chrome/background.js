@@ -10,6 +10,20 @@ chrome.runtime.onInstalled.addListener(
   }
 );
 
+chrome.runtime.onStartup.addListener(() => {
+  // Initialize state from storage when service worker starts
+  chrome.storage.local.get(['popupActive'], (result) => {
+    up = result.popupActive || 0;
+  });
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "getBackgroundData") {
+    sendResponse({popup: popup});
+  }
+  return true; // Required for async response
+});
+
 const config = (function () {
   function init() {
     function resolveSync(data) {
@@ -119,7 +133,7 @@ const Fetcher = function (cache) { // Pass reload to avoid cached result
 };
 
 //Popup API
-window.popup = (function () {
+const popup = (function () {
   let up = 0;
 
   function sellersUpdate() {
@@ -137,7 +151,7 @@ window.popup = (function () {
         windowType: "normal"
       },
       function (tabs) {
-        if (tabs === []) return;
+        if (tabs === []) return; // TODO fix
         const request = Fetcher('default');
         if (up) request.getDomain(tabs[0].url);
       }
@@ -156,11 +170,13 @@ window.popup = (function () {
     up: () => up,
     load: function () {
       up = 1;
+      chrome.storage.local.set({popupActive: up});
       chrome.tabs.onUpdated.addListener(lateLoadURL);
       getTab();
     },
     unload: function () {
       up = 0;
+      chrome.storage.local.set({popupActive: up});
       chrome.tabs.onUpdated.removeListener(lateLoadURL);
     },
     getSync: () => config.getSync(),
@@ -316,6 +332,7 @@ const data = (() => {
         content: content
       }
     }
+    chrome.storage.local.set({resultData: data.result});
     if (status > 1) {
       checker.start(data.result);
     } else {

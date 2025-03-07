@@ -200,4 +200,4 @@ const render = (() => {
   }
 })();
 
-chrome.runtime.getBackgroundPage(render.handleBg);
+chrome.runtime.sendMessage({action: "getBackgroundData"}, render.handleBg);
