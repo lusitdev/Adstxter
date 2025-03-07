@@ -151,7 +151,7 @@ const popup = (function () {
         windowType: "normal"
       },
       function (tabs) {
-        if (tabs === []) return; // TODO fix
+        if (!tabs || tabs.length === 0) return;
         const request = Fetcher('default');
         if (up) request.getDomain(tabs[0].url);
       }
