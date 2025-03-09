@@ -1,31 +1,33 @@
 {   
   "manifest_version": 3,
-    "name": "Adstxter - Ads.txt Seller Tester",
-    "short_name": "Adstxter",
-    "version": "0.1.0",
-    "description": "Check ads.txt authorization for sellers on the currently open site",
-    "icons": {
-      "48": "images/48.png",
-      "128": "128.png"
-    },
-    "permissions": [
-      "activeTab", 
-      "storage",
-      "*://*/ads.txt", 
-      "https://publicsuffix.org/list/public_suffix_list.dat"
-    ],
-    "background": {
-      "service_worker": ["background.js"]
-    },
-    "action": {
-      "default_title": "Adstxter",
-      "default_popup": "popup.html",
-      "default_icon": {
-        "16": "images/16.png",
-        "32": "images/32.png"
-      }
-    },
-    "content_security_policy": {
-      "extension_pages": "default-src 'self'; connect-src http://*/ads.txt https://*/ads.txt https://publicsuffix.org/list/public_suffix_list.dat"
+  "name": "Adstxter - Ads.txt Seller Tester",
+  "short_name": "Adstxter",
+  "version": "0.2.0",
+  "description": "Check ads.txt authorization for sellers on the currently open site",
+  "icons": {
+    "48": "img/48.png",
+    "128": "img/128.png"
+  },
+  "permissions": [
+    "activeTab", 
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*/ads.txt", 
+    "https://publicsuffix.org/list/public_suffix_list.dat"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Adstxter",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "img/16.png",
+      "32": "img/32.png"
     }
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; connect-src http://*/ads.txt https://*/ads.txt https://publicsuffix.org/list/public_suffix_list.dat"
+  }
 }

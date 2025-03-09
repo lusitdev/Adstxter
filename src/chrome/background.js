@@ -10,20 +10,6 @@ chrome.runtime.onInstalled.addListener(
   }
 );
 
-chrome.runtime.onStartup.addListener(() => {
-  // Initialize state from storage when service worker starts
-  chrome.storage.local.get(['popupActive'], (result) => {
-    up = result.popupActive || 0;
-  });
-});
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "getBackgroundData") {
-    sendResponse({popup: popup});
-  }
-  return true; // Required for async response
-});
-
 const config = (function () {
   function init() {
     function resolveSync(data) {
@@ -167,7 +153,10 @@ const popup = (function () {
   }
 
   return {
-    up: () => up,
+    up: (sendResponse) => {
+      if (sendResponse) sendResponse(up);
+      return up;
+    },
     load: function () {
       up = 1;
       chrome.storage.local.set({popupActive: up});
@@ -179,7 +168,10 @@ const popup = (function () {
       chrome.storage.local.set({popupActive: up});
       chrome.tabs.onUpdated.removeListener(lateLoadURL);
     },
-    getSync: () => config.getSync(),
+    getSync: (sendResponse) => {
+      if (sendResponse) sendResponse(config.getSync());
+      return config.getSync();
+    },
     saveSync: function (data) { // Save specified sellers to sync storage
       chrome.storage.sync.set(data, function () {
         if (data.sellers !== undefined) {
@@ -347,3 +339,40 @@ const data = (() => {
     novo: newSite
   };
 })();
+
+// const messageHandler = {
+//   up: () => up,
+//   load: function () {
+//   },
+//   unload: function () {
+//   },
+//   getSync: () => config.getSync(),
+//   saveSync: function (data) { // Save specified sellers to sync storage
+//   },
+//   message: function (resObj) {
+//   },
+//   refetch: function () {
+//   }
+// };
+
+// chrome.runtime.onStartup.addListener(() => {
+//   // Initialize state from storage when service worker starts
+//   chrome.storage.local.get(['popupActive'], (result) => {
+//     up = result.popupActive || 0;
+//   });
+// });
+
+chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+  const handler = popup[message.action];
+
+  if (handler && message.action === 'saveSync') {
+    handler(message.data);
+  }
+
+  if (handler) {
+    handler(sendResponse);
+    return true; // Required for async response
+  }
+
+  return false;
+});
