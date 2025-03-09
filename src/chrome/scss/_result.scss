@@ -1,3 +1,5 @@
+@use "mixins" as *;
+
 #result {
   @include flexMix(stretch, center, column);
   height: 4.4rem;
