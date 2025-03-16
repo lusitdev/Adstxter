@@ -3,7 +3,7 @@
   font-style: normal;
   font-weight: 400;
   src: local('B612 Mono Regular'), local('B612Mono-Regular'),
-    url('../font/B612_Mono/b612-mono-v14-latin-regular.woff2') format('woff2');
+    url('../font/b612-mono-v14-latin-regular.woff2') format('woff2');
 }
 
 @mixin flexMix($align, $justify, $column) {
