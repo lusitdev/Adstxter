@@ -55,7 +55,7 @@ function blurHandler(event) {
   data = (data === `\n`) ? '' : data;
   if (data !== sellers) {
     sellers = data;
-    chrome.runtime.sendMessage({
+    sendMessageWithRetry({
       action: 'saveSync',
       data: { sellers: data }
     });
@@ -67,19 +67,28 @@ function blurHandler(event) {
 }
 
 function formatSellers(entries) {
-  if (entries !== '') {
-    const format = line => `<div>${line}</div>`;
-    const formatted = entries.split(/\r?\n/).map(format);
+  console.log('formatSellers(entries): ' + entries);
+  if (entries && entries !== '') {
+    const formatted = entries
+      .split(/\r?\n/)
+      .map(l => `<div>${l}</div>`);
     dom.sellersArea.innerHTML = formatted.join('');
   }
 }
 
 async function enterSync(sync) {
-  sync = await sync; // Wait for loading sellers before requesting message
-  sellers = sync.sellers;
-  formatSellers(sync.sellers);
-  chrome.runtime.sendMessage({ action: 'load' });
-  // background.load();
+  try {
+    sync = await sync; // Wait for loading sellers before requesting message
+    if (!sync) {
+      console.error('No response received from background script for getSync action');
+      return;
+    }
+    sellers = sync.sellers || ''; // Ensure sellers is at least an empty string
+    formatSellers(sync.sellers);
+    sendMessageWithRetry({ action: 'load' });
+  } catch (error) {
+    console.error('Error in enterSync:', error);
+  }
 }
 
 function addIcon(ico) {
@@ -102,7 +111,7 @@ function addRefreshButton() {
     function () {
       dom.reInit(msg.status, copyMissing).then(
         // background.refetch()
-        chrome.runtime.sendMessage({ action: 'refetch' })
+        sendMessageWithRetry({ action: 'refetch' })
       );
     }, {
       once: true
@@ -188,17 +197,59 @@ function handleMessage(message) {
   return false;
 }
 
+function sendMessageWithRetry(message, callback, maxRetries = 3, delay = 100) {
+  let attempts = 0;
+  
+  function attemptSend() {
+    chrome.runtime.sendMessage(message, response => {
+      if (chrome.runtime.lastError || !response) {
+        attempts++;
+        if (attempts <= maxRetries) {
+          setTimeout(attemptSend, delay * attempts); // Exponential backoff
+        } else if (callback) {
+          callback(null);
+        }
+      } else if (callback) {
+        callback(response);
+      }
+    });
+  }
+  
+  attemptSend();
+}
 
-//enterSync(background.getSync());
-chrome.runtime.sendMessage({action: 'getSync'}, enterSync);
+function waitForServiceWorker() {
+  return new Promise((resolve) => {
+    function checkServiceWorker() {
+      chrome.runtime.sendMessage({action: 'ping'}, response => {
+        if (response && response.status === 'ready') {
+          resolve();
+        } else {
+          setTimeout(checkServiceWorker, 50);
+        }
+      });
+    }
+    checkServiceWorker();
+  });
+}
+
+async function initPopup() {
+  await waitForServiceWorker();
+  // Now safe to send messages
+  sendMessageWithRetry({action: 'getSync'}, enterSync);
+}
 
 dom.sellersArea.addEventListener('blur', blurHandler);
 chrome.runtime.onMessage.addListener(handleMessage);
 window.addEventListener('pagehide',
   () => {
     chrome.runtime.onMessage.removeListener(handleMessage);
-    // background.unload();
   }, {
     once: true
   },
 );
+
+// Usage
+sendMessageWithRetry({action: 'getSync'}, enterSync);
+
+initPopup();
