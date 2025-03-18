@@ -4,7 +4,7 @@ chrome.runtime.onInstalled.addListener(
   // Set up storage for sellers on extension install
   function (details) {
     if (details.reason === 'install') {
-      chrome.storage.sync.set({
+      chrome.storage.local.set({
         sellers: ''
       });
     }
@@ -20,7 +20,7 @@ const config = (function() {
   function initialize() {
     if (!initPromise) {
       initPromise = new Promise(resolve => {
-        chrome.storage.sync.get(null, items => {
+        chrome.storage.local.get(null, items => {
           Object.assign(data, items);
           if (typeof data.sellers !== 'string') {
             data.sellers = '';
@@ -203,7 +203,7 @@ const popup = (function () {
       return data;
     },
     saveSync: function (data) { // Save specified sellers to sync storage
-      chrome.storage.sync.set(data, function () {
+      chrome.storage.local.set(data, function () {
         if (data.sellers !== undefined) {
           config.sellers = data.sellers;
           if (up) sellersUpdate();
