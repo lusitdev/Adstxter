@@ -3,7 +3,7 @@ const sass = require('gulp-sass')(require('sass'));
 const sourcemaps = require('gulp-sourcemaps');
 const postcss = require('gulp-postcss');
 const autoprefixerPlugin = require('autoprefixer');
-const gulpZip = require('gulp-zip');
+const zip = require('gulp-zip').default;
 const terser = require('gulp-terser');
 const htmlmin = require('gulp-htmlmin');
 const flatten = require('gulp-flatten');
@@ -80,7 +80,7 @@ function buildDist() {
 
 function packDist() {
   return gulp.src('./build/dist/**/*')
-    .pipe(gulpZip('adstxter.zip'))
+    .pipe(zip('adstxter.zip'))
     .pipe(gulp.dest('./release'));
 }
 
