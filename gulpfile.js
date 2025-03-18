@@ -3,7 +3,7 @@ const sass = require('gulp-sass')(require('sass'));
 const sourcemaps = require('gulp-sourcemaps');
 const postcss = require('gulp-postcss');
 const autoprefixerPlugin = require('autoprefixer');
-const zip = require('gulp-zip');
+const gulpZip = require('gulp-zip');
 const terser = require('gulp-terser');
 const htmlmin = require('gulp-htmlmin');
 const flatten = require('gulp-flatten');
@@ -21,7 +21,7 @@ function compileSass(dest) {
 function buildDevWatch() {
   const dist = './build/dev';
   const images = './src/**/*.{png,jpg,jpeg,gif,svg}';
-  const fonts = './src/**/fonts/*.{woff,woff2,txt}';
+  const fonts = './src/**/fonts/**/*.{woff,woff2,txt}';
   const code = './src/**/*.{js,json,html}';
 
   const pipe = (glob, destPath = dist, opt = null) => gulp.src(glob, opt)
@@ -54,17 +54,33 @@ function buildDist() {
   
   return Promise.all([
     compileSass('dist'),
-    process('**/*.js', terser()),
+    process('**/*.js', terser({
+      compress: {
+        ecma: 2020,
+        passes: 2,
+        drop_console: true, // Keep console for debugging or set to true for production
+        // unsafe: true,
+        // unsafe_methods: true
+      },
+      mangle: {
+        properties: false // Don't rename properties as Chrome APIs use them
+      },
+      format: {
+        comments: false,
+        ecma: 2020,
+        ascii_only: true
+      }
+    })),
     process('**/*.html', htmlmin({ collapseWhitespace: true })),
     process('**/*.{png,jpg,jpeg,gif,svg}', null, `${dist}/img`, { encoding: false }),
-    process('**/fonts/*.{woff,woff2,txt}', null, `${dist}/font`, { encoding: false }),
+    process('**/fonts/**/*.{woff,woff2,txt}', null, `${dist}/font`, { encoding: false }),
     process('**/*.json')
   ]);
 }
 
 function packDist() {
   return gulp.src('./build/dist/**/*')
-    .pipe(zip('adstxter.zip'))
+    .pipe(gulpZip('adstxter.zip'))
     .pipe(gulp.dest('./release'));
 }
 
