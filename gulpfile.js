@@ -7,6 +7,8 @@ const zip = require('gulp-zip').default;
 const terser = require('gulp-terser');
 const htmlmin = require('gulp-htmlmin');
 const flatten = require('gulp-flatten');
+const rename = require('gulp-rename');
+const nodePath = require('path');
 
 function compileSass(dest) {
   const out = dest === 'dev' ? 'nested' : 'compressed';
@@ -24,9 +26,23 @@ function buildDevWatch() {
   const fonts = './src/**/fonts/**/*.{woff,woff2,txt}';
   const code = './src/**/*.{js,json,html}';
 
-  const pipe = (glob, destPath = dist, opt = null) => gulp.src(glob, opt)
-    .pipe(flatten())
-    .pipe(gulp.dest(destPath));
+  const pipe = (glob, destPath = dist, opt = null) => {
+    if (opt && opt.fonts) {
+      return gulp.src(glob, opt)
+        .pipe(rename((path) => {
+          const parts = path.dirname.split(nodePath.sep);
+          const fontsIndex = parts.indexOf('fonts');
+          if (fontsIndex !== -1) {
+            // Drop everything up to “fonts,” leaving the next subfolder
+            path.dirname = parts.slice(fontsIndex + 1).join(nodePath.sep);
+          }
+        }))
+        .pipe(gulp.dest(destPath));
+  }
+    return gulp.src(glob, opt)
+      .pipe(flatten())
+      .pipe(gulp.dest(destPath));
+  };
 
   const watch = (glob, fn) => {
     gulp.watch(glob, { ignoreInitial: false }, fn);
@@ -35,7 +51,7 @@ function buildDevWatch() {
   watch('./src/chrome/scss/*.scss', () => compileSass('dev'));
   watch(code, () => pipe(code));
   watch(images, () => pipe(images, `${dist}/img`, { encoding: false }));
-  watch(fonts, () => pipe(fonts, `${dist}/font`, { encoding: false }));
+  watch(fonts, () => pipe(fonts, `${dist}/font`, { encoding: false, fonts: true }));
 }
 
 function buildDist() {
@@ -47,9 +63,20 @@ function buildDist() {
     if (transform) {
       stream = stream.pipe(transform);
     }
-    return stream
-      .pipe(flatten())
-      .pipe(gulp.dest(destPath));
+    if (opt && opt.fonts) {
+      return stream
+        .pipe(rename((path) => {
+          const parts = path.dirname.split(nodePath.sep);
+          const fontsIndex = parts.indexOf('fonts');
+          if (fontsIndex !== -1) {
+            // Drop everything up to “fonts,” leaving the next subfolder
+            path.dirname = parts.slice(fontsIndex + 1).join(nodePath.sep);
+          }
+        }))
+        .pipe(gulp.dest(destPath));
+    }
+    stream = stream.pipe(flatten());
+    return stream.pipe(gulp.dest(destPath));  
   };
   
   return Promise.all([
@@ -73,7 +100,7 @@ function buildDist() {
     })),
     process('**/*.html', htmlmin({ collapseWhitespace: true })),
     process('**/*.{png,jpg,jpeg,gif,svg}', null, `${dist}/img`, { encoding: false }),
-    process('**/fonts/**/*.{woff,woff2,txt}', null, `${dist}/font`, { encoding: false }),
+    process('**/fonts/**/*.{woff,woff2,txt}', null, `${dist}/font`, { encoding: false, fonts: true }),
     process('**/*.json')
   ]);
 }
