@@ -3,7 +3,7 @@
   "name": "Adstxter - Ads.txt Seller Tester",
   "short_name": "Adstxter",
   "version": "0.2.0",
-  "description": "Check ads.txt authorization for sellers on the currently open site",
+  "description": "Tests ads.txt files for authorization of user-specified ad sellers.",
   "icons": {
     "48": "img/48.png",
     "128": "img/128.png"
