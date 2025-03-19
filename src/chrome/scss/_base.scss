@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto-Regular'),
+    url('../font/Roboto/roboto-v47-latin-regular.woff2') format('woff2');
+}
+
 html {
   font-size: 62.5%;
 }
@@ -8,7 +16,7 @@ body {
   font: 400 var(--m)/1.6rem 'Roboto', sans-serif;
   color: var(--def);
   padding: .4rem 0;
-  background: var(--bg2) url(../images/bg.jpg) center/contain;
+  background: var(--bg2) url(../img/bg.jpg) center/contain;
 
   >* {
     margin: 0 1.7rem;

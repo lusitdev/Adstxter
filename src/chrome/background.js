@@ -1,28 +1,55 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(
-  function (details) { // Set up storage for sellers on extension install
+  // Set up storage for sellers on extension install
+  function (details) {
     if (details.reason === 'install') {
-      chrome.storage.sync.set({
+      chrome.storage.local.set({
         sellers: ''
       });
     }
   }
 );
 
-const config = (function () {
-  function init() {
-    function resolveSync(data) {
-      return Object.defineProperties(config, Object.getOwnPropertyDescriptors(data));
+const config = (function() {
+  // Hold our data and track initialization
+  const data = {};
+  let initPromise = null;
+  
+  // Initialize once
+  function initialize() {
+    if (!initPromise) {
+      initPromise = new Promise(resolve => {
+        chrome.storage.local.get(null, items => {
+          Object.assign(data, items);
+          if (typeof data.sellers !== 'string') {
+            data.sellers = '';
+          }
+          resolve(data);
+        });
+      }).catch(err => {
+        console.warn('Config initialization failed:', err);
+        data.sellers = '';
+        return data;
+      });
     }
-    return new Promise(func => chrome.storage.sync.get(null, func))
-      .then(resolveSync)
-      .catch(console.warn);
+    return initPromise;
   }
-
+  
+  initialize();
+  
   return {
-    getSync: function () {
-      return (typeof config.sellers === 'string') ? config : init();
+    getSync: async function() {
+      await initialize();
+      return { sellers: data.sellers || '' };
+    },
+    
+    get sellers() {
+      return data.sellers || '';
+    },
+    
+    set sellers(value) {
+      data.sellers = value;
     }
   };
 })();
@@ -119,7 +146,7 @@ const Fetcher = function (cache) { // Pass reload to avoid cached result
 };
 
 //Popup API
-window.popup = (function () {
+const popup = (function () {
   let up = 0;
 
   function sellersUpdate() {
@@ -137,7 +164,7 @@ window.popup = (function () {
         windowType: "normal"
       },
       function (tabs) {
-        if (tabs === []) return;
+        if (!tabs || tabs.length === 0) return;
         const request = Fetcher('default');
         if (up) request.getDomain(tabs[0].url);
       }
@@ -153,30 +180,48 @@ window.popup = (function () {
   }
 
   return {
-    up: () => up,
+    up: (sendResponse) => {
+      if (sendResponse) sendResponse(up);
+      return up;
+    },
     load: function () {
       up = 1;
+      chrome.storage.local.set({popupActive: up});
       chrome.tabs.onUpdated.addListener(lateLoadURL);
       getTab();
     },
     unload: function () {
       up = 0;
+      chrome.storage.local.set({popupActive: up});
       chrome.tabs.onUpdated.removeListener(lateLoadURL);
     },
-    getSync: () => config.getSync(),
+    getSync: async function(sendResponse) {
+      const data = await config.getSync();
+      if (sendResponse) {
+        sendResponse(data);
+      }
+      return data;
+    },
     saveSync: function (data) { // Save specified sellers to sync storage
-      chrome.storage.sync.set(data, function () {
+      chrome.storage.local.set(data, function () {
         if (data.sellers !== undefined) {
           config.sellers = data.sellers;
-
           if (up) sellersUpdate();
         }
       });
     },
     message: function (resObj) {
       if (up) {
-
-        chrome.runtime.sendMessage(resObj);
+        try {
+          chrome.runtime.sendMessage(resObj, () => {
+            if (chrome.runtime.lastError) {
+              // Silently handle the error
+              console.debug('Message recipient unavailable:', chrome.runtime.lastError);
+            }
+          });
+        } catch (error) {
+          console.debug('Error sending message:', error);
+        }
       }
     },
     refetch: function () {
@@ -316,6 +361,7 @@ const data = (() => {
         content: content
       }
     }
+    chrome.storage.local.set({resultData: data.result});
     if (status > 1) {
       checker.start(data.result);
     } else {
@@ -330,3 +376,22 @@ const data = (() => {
     novo: newSite
   };
 })();
+
+chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+  const handler = popup[message.action];
+  if (message.action === 'ping') {
+    sendResponse({status: 'ready'});
+    return true;
+  }
+
+  if (handler && message.action === 'saveSync') {
+    handler(message.data);
+    sendResponse({received: 'true'});
+    return true;
+  }
+
+  if (handler) {
+    handler(sendResponse);
+    return true; // Required for async response
+  }
+});
