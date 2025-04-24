@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Adstxter - Ads.txt Seller Tester",
   "short_name": "Adstxter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Tests ads.txt files for authorization of user-specified ad sellers.",
   "icons": {
     "48": "img/48.png",

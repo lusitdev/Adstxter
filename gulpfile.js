@@ -3,12 +3,13 @@ const sass = require('gulp-sass')(require('sass'));
 const sourcemaps = require('gulp-sourcemaps');
 const postcss = require('gulp-postcss');
 const autoprefixerPlugin = require('autoprefixer');
-const zip = require('gulp-zip').default;
 const terser = require('gulp-terser');
 const htmlmin = require('gulp-htmlmin');
 const flatten = require('gulp-flatten');
 const rename = require('gulp-rename');
 const nodePath = require('path');
+const fs = require('fs');
+const archiver = require('archiver');
 
 function compileSass(dest) {
   const out = dest === 'dev' ? 'nested' : 'compressed';
@@ -106,9 +107,19 @@ function buildDist() {
 }
 
 function packDist() {
-  return gulp.src('./build/dist/**/*')
-    .pipe(zip('adstxter.zip'))
-    .pipe(gulp.dest('./release'));
+  return new Promise((resolve, reject) => {
+    const output = fs.createWriteStream('./release/adstxter.zip');
+    const archive = archiver('zip', {
+      zlib: { level: 5 }  // lowest for fastest compression
+    });
+    
+    output.on('close', resolve);
+    archive.on('error', reject);
+    
+    archive.pipe(output);
+    archive.directory('./build/dist/', false);
+    archive.finalize();
+  });
 }
 
 exports.buildDevWatch = buildDevWatch;

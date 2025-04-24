@@ -1,6 +1,6 @@
 {
   "name": "adstxter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "adstxter",
   "main": "popup.html",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/lusitdev/Adstxter#readme",
   "devDependencies": {
+    "archiver": "^7.0.1",
     "autoprefixer": "^10.4.20",
     "gulp": "^5.0.0",
     "gulp-autoprefixer": "^9.0.0",
@@ -27,7 +28,6 @@
     "gulp-sass": "^6.0.1",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-terser": "^2.1.0",
-    "gulp-zip": "^6.1.0",
     "sass": "^1.85.1"
   }
 }
