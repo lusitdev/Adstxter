@@ -15,7 +15,6 @@ const tool = {
   }
 };
 
-
 let messageIndex = 0;
 let msg;
 let sellers;
@@ -48,23 +47,6 @@ const linkTooltip = "Download ads.txt from";
 
 dom.init();
 dom.showVersion(chrome.runtime.getManifest().version);
-
-function blurHandler(event) {
-  let data = event.target.innerText;
-
-  data = (data === `\n`) ? '' : data;
-  if (data !== sellers) {
-    sellers = data;
-    sendMessageWithRetry({
-      action: 'saveSync',
-      data: { sellers: data }
-    });
-    // background.saveSync({
-    //   sellers: data
-    // });
-    if (!data) tool.empty(dom.sellersArea);
-  }
-}
 
 function formatSellers(entries) {
   console.log('formatSellers(entries): ' + entries);
@@ -239,17 +221,24 @@ async function initPopup() {
   sendMessageWithRetry({action: 'getSync'}, enterSync);
 }
 
-dom.sellersArea.addEventListener('blur', blurHandler);
-chrome.runtime.onMessage.addListener(handleMessage);
-window.addEventListener('pagehide',
-  () => {
-    chrome.runtime.onMessage.removeListener(handleMessage);
-  }, {
-    once: true
-  },
-);
+dom.sellersArea.addEventListener('blur', async (e) => {
+  const data = e.target.innerText;
+  const cleanData = (data === `\n`) ? '' : data;
 
-// Usage
+  if (cleanData !== sellers) {
+  // Force synchronous save before popup closes
+    await new Promise((resolve) => {
+      chrome.runtime.sendMessage({
+        action: 'saveSync',
+        data: { sellers: cleanData }
+      }, resolve);
+    });
+  }
+  // if (!cleanData) tool.empty(dom.sellersArea);
+});
+
+chrome.runtime.onMessage.addListener(handleMessage);
+
 sendMessageWithRetry({action: 'getSync'}, enterSync);
 
 initPopup();
