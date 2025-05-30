@@ -118,7 +118,8 @@ const Fetcher = function (cache) { // Pass reload to avoid cached result
     if (!http && filePath.includes('ads.txt')) {
       http = true;
       path = undefined;
-      getText(host); // HTTPS fetch failed. Trying HTTP connection...
+      // HTTPS fetch failed. Trying HTTP connection...
+      getText(host);
     } else {
       func([www + host, 1, `${err}`]);
     }
@@ -132,7 +133,8 @@ const Fetcher = function (cache) { // Pass reload to avoid cached result
     path = path || (!http ? 'https:' : 'http:') + '//' + www + host + '/' + filePath;
     fetch(path, requestInit)
       .then(onlyOK)
-      .then(onlyPlainText) // Reject promise when non-standard content-type served
+      // Reject promise when non-standard content-type served
+      .then(onlyPlainText) 
       .then(res => res.text())
 
       .then(res => func([www + host, 2, res]))
@@ -171,13 +173,17 @@ const popup = (function () {
     );
   }
 
-  function lateLoadURL(tabId, changeInfo, pTab) { // Capture URL if loaded later than the popup was open
+  // Capture URL if loaded later than the popup was open
+  function lateLoadURL(tabId, changeInfo, pTab) { 
     if (changeInfo.url && pTab.active) {
-      popup.message('reset'); // Send message new fetch is upcomming
+      // Send message new fetch is upcomming
+      popup.message('reset');
       const request = Fetcher('default');
       if (up) request.getDomain(changeInfo.url);
     }
   }
+
+  let saveTimeout;
 
   return {
     up: (sendResponse) => {
@@ -202,25 +208,28 @@ const popup = (function () {
       }
       return data;
     },
-    saveSync: function (data) { // Save specified sellers to sync storage
-      chrome.storage.local.set(data, function () {
-        if (data.sellers !== undefined) {
-          config.sellers = data.sellers;
-          if (up) sellersUpdate();
-        }
-      });
+    saveSync: function (data) {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      
+      saveTimeout = setTimeout(function() {
+        chrome.storage.local.set(data, function () {
+          if (data.sellers !== undefined) {
+            config.sellers = data.sellers;
+            if (up) sellersUpdate();
+          }
+        });
+        }, 500);      
     },
     message: function (resObj) {
       if (up) {
         try {
           chrome.runtime.sendMessage(resObj, () => {
             if (chrome.runtime.lastError) {
-              // Silently handle the error
-              console.debug('Message recipient unavailable:', chrome.runtime.lastError);
+              console.error('Message recipient unavailable:', chrome.runtime.lastError);
             }
           });
         } catch (error) {
-          console.debug('Error sending message:', error);
+          console.error('Error sending message:', error);
         }
       }
     },
