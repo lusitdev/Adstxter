@@ -221,24 +221,18 @@ async function initPopup() {
   sendMessageWithRetry({action: 'getSync'}, enterSync);
 }
 
-dom.sellersArea.addEventListener('blur', async (e) => {
+document.getElementById('sellers').addEventListener('input', async (e) => {
   const data = e.target.innerText;
   const cleanData = (data === `\n`) ? '' : data;
 
   if (cleanData !== sellers) {
-  // Force synchronous save before popup closes
-    await new Promise((resolve) => {
-      chrome.runtime.sendMessage({
-        action: 'saveSync',
-        data: { sellers: cleanData }
-      }, resolve);
+    await chrome.runtime.sendMessage({
+      action: 'saveSync',
+      data: { sellers: data }
     });
   }
-  // if (!cleanData) tool.empty(dom.sellersArea);
 });
 
 chrome.runtime.onMessage.addListener(handleMessage);
-
-sendMessageWithRetry({action: 'getSync'}, enterSync);
 
 initPopup();
