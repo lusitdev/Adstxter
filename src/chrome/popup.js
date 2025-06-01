@@ -218,20 +218,30 @@ function waitForServiceWorker() {
 async function initPopup() {
   await waitForServiceWorker();
   // Now safe to send messages
-  sendMessageWithRetry({action: 'getSync'}, enterSync);
+  sendMessageWithRetry({ action: 'getSync' }, enterSync);
 }
 
-document.getElementById('sellers').addEventListener('input', async (e) => {
+dom.sellersArea.addEventListener('input', async (e) => {
   const data = e.target.innerText;
   const cleanData = (data === `\n`) ? '' : data;
 
   if (cleanData !== sellers) {
-    await chrome.runtime.sendMessage({
+    sendMessageWithRetry({
       action: 'saveSync',
       data: { sellers: data }
     });
   }
 });
+
+dom.sellersArea.addEventListener('blur', async (e) => {
+  const data = e.target.innerText;
+  const cleanData = (data === `\n`) ? '' : data;
+
+  if (cleanData !== sellers) {
+    sendMessageWithRetry({ action: 'noFetchEval', data: { sellers: cleanData }});
+  }
+});
+
 
 chrome.runtime.onMessage.addListener(handleMessage);
 

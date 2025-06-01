@@ -129,7 +129,6 @@ const Fetcher = function (cache) { // Pass reload to avoid cached result
     host = hostNew;
     filePath = filePath || filePathValue;
     func = func || fetchResolver;
-    if (!popup.up() && !filePath.includes('.dat')) return;
     path = path || (!http ? 'https:' : 'http:') + '//' + www + host + '/' + filePath;
     fetch(path, requestInit)
       .then(onlyOK)
@@ -147,9 +146,8 @@ const Fetcher = function (cache) { // Pass reload to avoid cached result
   });
 };
 
-//Popup API
+//Popup
 const popup = (function () {
-  let up = 0;
 
   function sellersUpdate() {
     (data.result.status === 0) ?
@@ -168,69 +166,57 @@ const popup = (function () {
       function (tabs) {
         if (!tabs || tabs.length === 0) return;
         const request = Fetcher('default');
-        if (up) request.getDomain(tabs[0].url);
+        request.getDomain(tabs[0].url);
       }
     );
   }
 
-  // Capture URL if loaded later than the popup was open
-  function lateLoadURL(tabId, changeInfo, pTab) { 
-    if (changeInfo.url && pTab.active) {
-      // Send message new fetch is upcomming
-      popup.message('reset');
-      const request = Fetcher('default');
-      if (up) request.getDomain(changeInfo.url);
-    }
-  }
-
   let saveTimeout;
+  let tabUpdatedListener;
 
   return {
-    up: (sendResponse) => {
-      if (sendResponse) sendResponse(up);
-      return up;
+    noFetchEval: function (d) {
+      chrome.storage.local.set(d, function () {
+          if (d.sellers !== undefined) {
+            config.sellers = d.sellers;
+            sellersUpdate();
+          }
+        });
     },
     load: function () {
-      up = 1;
-      chrome.storage.local.set({popupActive: up});
-      chrome.tabs.onUpdated.addListener(lateLoadURL);
+      if (!tabUpdatedListener) {
+        chrome.tabs.onUpdated.addListener(getTab);
+        tabUpdatedListener = true;
+      }
       getTab();
     },
-    unload: function () {
-      up = 0;
-      chrome.storage.local.set({popupActive: up});
-      chrome.tabs.onUpdated.removeListener(lateLoadURL);
-    },
     getSync: async function(sendResponse) {
-      const data = await config.getSync();
-      if (sendResponse) {
-        sendResponse(data);
-      }
-      return data;
+        const d = await config.getSync();
+        if (sendResponse) {
+          sendResponse(d);
+        }
+        return d;
     },
-    saveSync: function (data) {
+    saveSync: function (d) {
       if (saveTimeout) clearTimeout(saveTimeout);
       
       saveTimeout = setTimeout(function() {
-        chrome.storage.local.set(data, function () {
-          if (data.sellers !== undefined) {
-            config.sellers = data.sellers;
-            if (up) sellersUpdate();
+        chrome.storage.local.set(d, function () {
+          if (d.sellers !== undefined) {
+            config.sellers = d.sellers;
           }
         });
         }, 500);      
     },
     message: function (resObj) {
-      if (up) {
-        try {
-          chrome.runtime.sendMessage(resObj, () => {
-            if (chrome.runtime.lastError) {
-              console.error('Message recipient unavailable:', chrome.runtime.lastError);
-            }
-          });
-        } catch (error) {
-          console.error('Error sending message:', error);
-        }
+      try {
+        chrome.runtime.sendMessage(resObj, () => {
+          if (chrome.runtime.lastError) {
+            console.log('Message recipient unavailable:', chrome.runtime.lastError);
+          }
+        });
+      } catch (error) {
+        console.log('Error sending message:', error);
       }
     },
     refetch: function () {
@@ -393,7 +379,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     return true;
   }
 
-  if (handler && message.action === 'saveSync') {
+  if (handler && (message.action === 'saveSync' || message.action === 'noFetchEval')) {
     handler(message.data);
     sendResponse({received: 'true'});
     return true;
