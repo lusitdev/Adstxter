@@ -166,7 +166,7 @@ const popup = (function () {
       function (tabs) {
         if (!tabs || tabs.length === 0) return;
         const request = Fetcher('default');
-        request.getDomain(tabs[0].url);
+        if (tabs[0].url) request.getDomain(tabs[0].url);
       }
     );
   }
